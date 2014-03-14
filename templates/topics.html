@@ -1,0 +1,40 @@
+{% extends "basebunpou.html" %}
+
+{% load bootstrap3 %}
+{% block content %}
+    <h3>List of topics for lesson {{ content.lessonNumber }}</h3>
+<table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>#</th>
+            <th>Theme</th>
+            <th>Description</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          {%for topic in content.topicsList %}
+          <tr>
+            <td><a href="{{ topic.get_edit_url }}"><span class="glyphicon glyphicon-edit"></span></a></td>
+            <td><a href="{{ topic.get_absolute_url }}">{{ forloop.counter}}</a></td>
+            <td>{{ topic.name }}</td>
+            <td>{{ topic.description }}</td>
+
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+        <div>
+       <form action="" method="post" class="form">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+        <button type="submit" class="btn btn-default btn-lg center-block">
+            {% bootstrap_icon "ok" %} Submit Topic
+        </button>
+        {% endbuttons %}
+    </form>
+    </div>
+
+{% endblock %}

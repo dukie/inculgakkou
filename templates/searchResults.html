@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% block content %}
+<h3>Search results for <b>{{ content.searchString }}</b> </h3>
+<h3>Kanji</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Kanji</th>
+            <th>Writing</th>
+            <th>Furigana</th>
+            <th>Translate</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for result in content.kanjiResults %}
+            <tr>
+                <td><a href="{{ result.relatedKanji.get_absolute_url }}">{{ result.relatedKanji.symbol }}</a></td>
+                <td>{{ result.writing }}</td>
+                <td>{{ result.reading }}</td>
+                <td>{{ result.translation }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Bunpou</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Topic</th>
+            <th>Kanji</th>
+            <th>Furigana</th>
+            <th>Translate</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for result in content.bunpouResults %}
+            <tr>
+                <td><a href="{{ result.topic.get_absolute_url }}">{{ result.topic.name }}</a></td>
+                <td>{{ result.kanji }}</td>
+                <td>{{ result.furigana }}</td>
+                <td>{{ result.translateRus }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

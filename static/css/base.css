@@ -1,0 +1,32 @@
+html {
+    overflow-y: scroll;
+}
+
+img#logo {
+    display: block;
+    margin: 10px auto;
+}
+
+nav.leftnav{
+  width: 15%;
+  float: left;
+  display: inline;
+  padding: 0;
+  margin: 0 3% 0 0;
+}
+
+section#main{
+  width: 80%;
+  float: left;
+  margin: 0;
+  padding: 0 2% 0 0;
+  display: inline;
+}
+
+span.kanjiTopic {
+    font-size: 30px;
+}
+
+span.kanjiCell {
+    font-size: 23px;
+}

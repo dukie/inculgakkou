@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+{% block content %}
+    <h3>Lessons List</h3>
+<table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>StartDate</th>
+            <th>EndDate</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%for level in content.levels %}
+          <tr>
+            <td>{{ level.name }}</td>
+            <td>{{ level.startPeriod }}</td>
+            <td>{{ level.endPeriod }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    <div>
+       <form action="" method="post" class="form">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+        <button type="submit" class="btn btn-default btn-lg center-block">
+            {% bootstrap_icon "ok" %} Submit Level
+        </button>
+        {% endbuttons %}
+    </form>
+    </div>
+{% endblock %}
