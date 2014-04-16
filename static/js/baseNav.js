@@ -8,7 +8,7 @@ $(function() {
     $('#searchField').keydown(function(event){
         if(event.keyCode == 13) {
             console.log(searchString);
-            window.location = '/search/'+searchString+'/';
+            window.location = '/incul/search/'+searchString+'/';
             return false;
         }
     })})();

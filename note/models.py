@@ -166,3 +166,4 @@ class KanjiWord(models.Model):
 
     def get_edit_url(self):
         return reverse('note.kanjiviews.kanjiWords', args=[str(self.relatedKanji.pk),str(self.id)])
+

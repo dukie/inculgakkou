@@ -4,6 +4,7 @@ Django settings for incul project.
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/
 
+
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
@@ -51,7 +52,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'incul.urls'
 
-WSGI_APPLICATION = 'incul.wsgi.application'
+#WSGI_APPLICATION = 'incul.wsgi.application'
 
 
 # Database
@@ -80,8 +81,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
-
-STATIC_URL = '/static/'
+STATIC_URL = '/incul/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
@@ -95,8 +95,8 @@ TEMPLATE_DIRS = (
 
 
 BOOTSTRAP3 = {
-    'jquery_url': "/static/js/jquery-1.11.0.js",
-    'base_url':  "/static/bootstrap/",
+    'jquery_url': "/incul/static/js/jquery-1.11.0.js",
+    'base_url':  "/incul/static/bootstrap/",
     'css_url': None,
     'theme_url': None,
     'javascript_url': None,

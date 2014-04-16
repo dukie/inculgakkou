@@ -7,6 +7,7 @@ from note.forms import LevelForm, SenseiForm, LessonForm, TopicForm, ExampleForm
 from note.models import Level, Lesson, Topic, Example, Sensei, Book, KanjiWord
 
 
+
 def home(request):
     level = Level.objects.all().order_by('-name')[0]
     return redirect(level)
@@ -186,7 +187,7 @@ def sensei(request, senseiId):
 
 def convert(request):
     if request.method == 'POST':
-        print request.POST
+        print request
         kanji = request.POST['kanji']
     converter = Converter.Converter()
     hiragana = converter.getHiragana(kanji)
