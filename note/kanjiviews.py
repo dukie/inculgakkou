@@ -1,14 +1,13 @@
 
-from django.db.models import Q
-from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from note.forms import KanjiLessonForm, KanjiForm, KanjiWordsForm
 from note.models import KanjiLesson, Kanji, KanjiWord
 
 
+ACTUAL_KANJI_TO_SHOW = 13
+
 def kanjiLessons(request, lessonId=None):
     lessons = KanjiLesson.objects.all()
-    actualKanji = Kanji.objects.all().order_by('-number')[:10]
     context = {
         'lessonsList': lessons,
     }
@@ -33,14 +32,13 @@ def kanjiLessons(request, lessonId=None):
                   {
                       'form': form,
                       'content': context,
-                      'actualKanji': actualKanji
+                      'actualKanji': getActualKanji(ACTUAL_KANJI_TO_SHOW)
                   })
 
 
 def kanjiList(request, lessonId, kanjiId=None):
     lesson = get_object_or_404(KanjiLesson, pk=lessonId)
     kanji = Kanji.objects.filter(lesson=lesson)
-    actualKanji = Kanji.objects.all().order_by('-number')[:10]
     context = {
         'lessonDate': lesson.date,
         'kanjiList': kanji,
@@ -68,14 +66,13 @@ def kanjiList(request, lessonId, kanjiId=None):
                   {
                       'content': context,
                       'form': form,
-                      'actualKanji': actualKanji
+                      'actualKanji': getActualKanji(ACTUAL_KANJI_TO_SHOW)
                   })
 
 
 def kanjiWords(request, kanjiId, kanjiWordId=None):
     kanji = get_object_or_404(Kanji, pk=kanjiId)
     kanjiWords = KanjiWord.objects.filter(relatedKanji=kanji)
-    actualKanji = Kanji.objects.all().order_by('-number')[:10]
     context = {
         'kanji': kanji,
         'kanjiWords': kanjiWords,
@@ -103,5 +100,10 @@ def kanjiWords(request, kanjiId, kanjiWordId=None):
                   {
                       'content': context,
                       'form': form,
-                      'actualKanji': actualKanji
+                      'actualKanji': getActualKanji(ACTUAL_KANJI_TO_SHOW)
                   })
+
+"""utils func
+"""
+def getActualKanji(numberOfKanji):
+    return Kanji.objects.all().order_by('-number')[:numberOfKanji]
