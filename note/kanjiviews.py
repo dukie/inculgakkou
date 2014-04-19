@@ -4,7 +4,7 @@ from note.forms import KanjiLessonForm, KanjiForm, KanjiWordsForm
 from note.models import KanjiLesson, Kanji, KanjiWord
 
 
-ACTUAL_KANJI_TO_SHOW = 13
+ACTUAL_KANJI_TO_SHOW = 20
 
 def kanjiLessons(request, lessonId=None):
     lessons = KanjiLesson.objects.all()

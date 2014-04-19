@@ -1,6 +1,6 @@
 import os
-import newrelic.agent
-newrelic.agent.initialize('/tmp/newrelic/newrelic.ini')
+#import newrelic.agent
+#newrelic.agent.initialize('/tmp/newrelic/newrelic.ini')
 #substitute mysite with the name of your project !!!
 os.environ['DJANGO_SETTINGS_MODULE'] = 'incul.settings'
 

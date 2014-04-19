@@ -29,7 +29,7 @@
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-           <li><a href="{% url 'note.views.home' %}"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+           <li><a href="{% url 'note.views.home' %}"><span class="glyphicon glyphicon-home"></span>Home</a></li>
           <li><a><span class="glyphicon glyphicon-stats"></span> {{ content.levelName }}</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -39,21 +39,21 @@
             </div>
           </form>
       <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Settings<b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings<b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li>
-                <a href="{% url 'note.views.addLevel' %}"><span class="glyphicon glyphicon-star-empty"></span> Levels</a>
+                <a href="{% url 'note.views.addLevel' %}"><span class="glyphicon glyphicon-star-empty"></span>Levels</a>
             </li>
             <li>
-                <a href="{% url 'note.views.sensei' %}"><span class="glyphicon glyphicon-user"></span> Senseis</a>
+                <a href="{% url 'note.views.sensei' %}"><span class="glyphicon glyphicon-user"></span>Senseis</a>
             </li>
             <li>
-                <a href="{% url 'note.views.addBooks' %}"><span class="glyphicon glyphicon-book"></span> Books</a>
+                <a href="{% url 'note.views.addBooks' %}"><span class="glyphicon glyphicon-book"></span>Books</a>
             </li>
           </ul>
         </li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Level<b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Level<b class="caret"></b></a>
           <ul class="dropdown-menu">
               {%for level in content.levels %}
                 <li {% if level.name == content.levelName%} class="active"{% endif %}><a href="{{ level.get_absolute_url }}">{{ level.name }}</a></li>
@@ -61,10 +61,10 @@
           </ul>
         </li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown"> Class<b class="caret"></b></a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Class<b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li class="active"><a  href="#"><span class="glyphicon glyphicon-comment"></span> Bunpou</a></li>
-            <li><a href="{% url 'note.kanjiviews.kanjiLessons' %}"><span class="glyphicon glyphicon-pencil"></span> Kanji</a></li>
+            <li class="active"><a  href="#"><span class="glyphicon glyphicon-comment"></span>Bunpou</a></li>
+            <li><a href="{% url 'note.kanjiviews.kanjiLessons' %}"><span class="glyphicon glyphicon-pencil"></span>Kanji</a></li>
           </ul>
         </li>
        </ul>
@@ -77,16 +77,16 @@
 {% block leftnav %}
     <nav class="leftnav" role="main">
 <ul id="sidenav01" class="accordion nav nav-department nav-tabs nav-stacked">
-        <li><a href="#1"><span class="glyphicon glyphicon-time"></span> Schedule</a></li>
+        <li><a href="#1"><span class="glyphicon glyphicon-time"></span>Schedule</a></li>
         <li>
-            <a href="#li02" data-toggle='collapse' data-target='#subnav01', data-parent="#sidenav01" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-user"></span><span class='glyphicon glyphicon-chevron-up pull-right'></span> Classmates</a>
+            <a href="#li02" data-toggle='collapse' data-target='#subnav01', data-parent="#sidenav01" class="accordion-toggle collapsed"><span class="glyphicon glyphicon-user"></span><span class='glyphicon glyphicon-chevron-up pull-right'></span>Classmates</a>
               <ul id="subnav01" class="nav nav-list collapse">
                 <li><a href="#1">Classmate1</a></li>
               </ul>
         </li>
 
         <li>
-            <a href="#li03" data-toggle='collapse' data-target='#subnav02', data-parent='#sidenav01' class="accordion-toggle collapsed"><span class="glyphicon glyphicon-list-alt"></span><span class="glyphicon glyphicon-chevron-up pull-right"></span> Current topics</a>
+            <a href="#li03" data-toggle='collapse' data-target='#subnav02', data-parent='#sidenav01' class="accordion-toggle collapsed"><span class="glyphicon glyphicon-list-alt"></span><span class="glyphicon glyphicon-chevron-up pull-right"></span>Current topics</a>
               <ul id="subnav02" class="nav nav-list collapse">
                 <li><a href="#pimu">Topic1</a></li>
               </ul>

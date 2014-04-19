@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
@@ -39,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'note',
     'bootstrap3',
+    'django_behave',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -62,7 +62,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'TEST_NAME': 'TEST',
+    },
 }
 
 # Internationalization
@@ -103,3 +104,49 @@ BOOTSTRAP3 = {
     'horizontal_label_class': 'col-md-2',
     'horizontal_field_class': 'col-md-4',
 }
+
+TEST_RUNNER = 'django_behave.runner.DjangoBehaveTestSuiteRunner'
+
+WSGI_APPLICATION = 'incul.wsgi.application'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+	'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/tmp/sqlDJ.log',
+        },
+    'fileLog': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': '/tmp/vkursaxError.log',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins', 'fileLog'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+	'django.db.backends': {
+            'level':'DEBUG',
+            'handlers': ['file'],
+            'propagate': False,
+        }
+    }
+}
+FIXTURE_DIRS = (
+   os.path.join(BASE_DIR, "incul/fixtures/"),
+)
