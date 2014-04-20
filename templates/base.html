@@ -9,6 +9,8 @@
     <script src="{% bootstrap_jquery_url %}"></script>
     <script src="{% static "jquery-ui/js/jquery-ui-1.10.4.custom.js" %}"></script>
     <script src="{% static "js/baseNav.js" %}"></script>
+    {% block custom_inculde %}
+    {% endblock %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     <link rel="stylesheet" href="{% static "css/base.css" %}">

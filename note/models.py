@@ -167,3 +167,17 @@ class KanjiWord(models.Model):
     def get_edit_url(self):
         return reverse('note.kanjiviews.kanjiWords', args=[str(self.relatedKanji.pk),str(self.id)])
 
+    def __unicode__(self):
+        return self.writing
+
+
+class KanjiQuizze(models.Model):
+
+    sessionKey = models.CharField(max_length=30,null=False)
+    content = models.CharField(max_length=30, null=False)
+    answer = models.CharField(max_length=30, null=False)
+    date = models.DateField(null=False)
+
+    class Meta:
+        db_table = 'incul_kanjquizze'
+        ordering = ['date']

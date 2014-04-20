@@ -11,7 +11,7 @@ urlpatterns = patterns('',
                        url(r'^incul/bunpou/topic/(?P<topicId>\d+)/$', 'note.views.examples', name='examples'),
                        url(r'^incul/kanji/kanjilist/(?P<lessonId>\d+)/$', 'note.kanjiviews.kanjiList', name='kanjiList'),
                        url(r'^incul/kanji/kanjiwords/(?P<kanjiId>\d+)/$', 'note.kanjiviews.kanjiWords', name='kanjiWords'),
-                       url(r'^incul/search/(?P<searchString>.+)/$', 'note.views.search', name='search'),
+                       url(r'^incul/search/(?P<searchString>\w*)/$', 'note.views.search', name='search'),
                        url(r'^incul/$', 'note.views.home'),
 
                        #Add views
@@ -27,6 +27,7 @@ urlpatterns = patterns('',
                         url(r'^incul/kanji/(?P<lessonId>\w+){0,1}$', 'note.kanjiviews.kanjiLessons', name='kanjiLessons'),
                         url(r'^incul/kanji/kanjilist/(?P<lessonId>\d+)/(?P<kanjiId>\d+)/$', 'note.kanjiviews.kanjiList', name='kanjiEdit'),
                         url(r'^incul/kanji/kanjiwords/(?P<kanjiId>\d+)/(?P<kanjiWordId>\d+)/$', 'note.kanjiviews.kanjiWords', name='kanjiWordEdit'),
+                        url(r'^incul/kanji/quizze/(?P<answer>\w*)[/]?$', 'note.kanjiviews.kanjiQuizze', name='kanjiQuizze'),
                        #Post views
                        url(r'^incul/convert/$', 'note.views.convert', name='convert'),
 
