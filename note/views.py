@@ -1,11 +1,12 @@
+# -*- coding: utf-8 -*-
 import json
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from KanjiToHiragana import Converter
 from note.forms import LevelForm, SenseiForm, LessonForm, TopicForm, ExampleForm, BookForm
 from note.models import Level, Lesson, Topic, Example, Sensei, Book, KanjiWord
-
 
 
 def home(request):
@@ -119,7 +120,7 @@ def examples(request, topicId, exampleId=None):
 
 def search(request, searchString):
     if len(searchString) < 2:
-        redirectAdr = '/'
+        redirectAdr = reverse('note.views.home')
         if request.META.get('HTTP_REFERER'):
             redirectAdr = request.META.get('HTTP_REFERER')
         return HttpResponseRedirect(redirectAdr)

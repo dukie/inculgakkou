@@ -1,11 +1,10 @@
-
+# -*- coding: utf-8 -*-
 from django.shortcuts import render, redirect, get_object_or_404
+from note import settings
 from note.forms import KanjiLessonForm, KanjiForm, KanjiWordsForm
 from note.models import KanjiLesson, Kanji, KanjiWord, KanjiQuizze
-import random
-from datetime import datetime
+import utils
 
-ACTUAL_KANJI_TO_SHOW = 20
 
 def kanjiLessons(request, lessonId=None):
     lessons = KanjiLesson.objects.all()
@@ -33,7 +32,7 @@ def kanjiLessons(request, lessonId=None):
                   {
                       'form': form,
                       'content': context,
-                      'actualKanji': getActualKanji(ACTUAL_KANJI_TO_SHOW)
+                      'actualKanji': utils.getActualKanji(settings.ACTUAL_KANJI_TO_SHOW)
                   })
 
 
@@ -67,7 +66,7 @@ def kanjiList(request, lessonId, kanjiId=None):
                   {
                       'content': context,
                       'form': form,
-                      'actualKanji': getActualKanji(ACTUAL_KANJI_TO_SHOW)
+                      'actualKanji': utils.getActualKanji(settings.ACTUAL_KANJI_TO_SHOW)
                   })
 
 
@@ -101,49 +100,9 @@ def kanjiWords(request, kanjiId, kanjiWordId=None):
                   {
                       'content': context,
                       'form': form,
-                      'actualKanji': getActualKanji(ACTUAL_KANJI_TO_SHOW)
+                      'actualKanji': utils.getActualKanji(settings.ACTUAL_KANJI_TO_SHOW)
                   })
 
 
-def kanjiQuizze(request, answer=None):
-    context = {}
-    id = request.COOKIES.get('csrftoken')
-    try:
-        quizze = KanjiQuizze.objects.get(sessionKey=id)
-        if answer:
-            if quizze.answer == answer:
-                context["result"] = "Correct"
-            else:
-                context["result"] = "Wrong"
-            context['prev_question'] = quizze.content
-            context['prev_answer'] = quizze.answer
-    except KanjiQuizze.DoesNotExist:
-        quizze = KanjiQuizze()
-        quizze.sessionKey = id
-    actualK = [item.pk for item in getActualKanji(ACTUAL_KANJI_TO_SHOW)]
-    words = KanjiWord.objects.filter(relatedKanji__in=actualK)
-    length = len(words) - 1
-    random.random()
-    choose = random.randint(0,length)
-    question = words[choose].writing
-    answer = words[choose].reading
-    translation = words[choose].translation
-
-    quizze.answer = answer
-    quizze.content = question
-    quizze.date = datetime.now()
-    quizze.save()
-    context['translation'] = translation
-    context['question'] = question
-    context['answer'] = answer
-    return render(request, 'kanjiquizzes.html',
-                  {
-                      'content': context,
-                      'actualKanji': getActualKanji(ACTUAL_KANJI_TO_SHOW)
-                  })
 
 
-"""utils func
-"""
-def getActualKanji(numberOfKanji):
-    return Kanji.objects.all().order_by('-number')[:numberOfKanji]

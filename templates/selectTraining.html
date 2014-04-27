@@ -1,0 +1,40 @@
+{% extends "basebunpou.html" %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+{% block content %}
+    <h3>Select training topic:</h3>
+     <div class="btn-group" data-toggle="radio">
+<table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Date</th>
+            <th>Theme</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%for topic in content.topics %}
+          <tr>
+            <td><input type="radio" name="options" id="{{ topic.id }}"></td>
+            <td>{{ topic.lesson.date}}</td>
+            <td>{{ topic.name }}</td>
+            <td>{{ topic.description }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+<script>
+    $(function() {
+        $('.btn-group').click(function(){
+            var inputButton = $('input:checked');
+            if (inputButton.attr('id')) {
+                console.log(inputButton);
+                $.cookie('topic',inputButton.attr('id'), {path:'/'});
+                window.location = document.baseURI;
+            }
+        })
+    });
+</script>
+{% endblock %}

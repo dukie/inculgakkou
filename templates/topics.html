@@ -7,8 +7,8 @@
         <thead>
           <tr>
             <th></th>
-            <th>#</th>
             <th>Theme</th>
+            <th>Type</th>
             <th>Description</th>
 
           </tr>
@@ -17,8 +17,8 @@
           {%for topic in content.topicsList %}
           <tr>
             <td><a href="{{ topic.get_edit_url }}"><span class="glyphicon glyphicon-edit"></span></a></td>
-            <td><a href="{{ topic.get_absolute_url }}">{{ forloop.counter}}</a></td>
-            <td>{{ topic.name }}</td>
+            <td><a href="{{ topic.get_absolute_url }}">{{ topic.name }}</a></td>
+            <td>{{ topic.topicType}}</td>
             <td>{{ topic.description }}</td>
 
           </tr>

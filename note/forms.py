@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.admin import widgets
 from note.models import Sensei, Lesson, Topic, Example, Book, Level, KanjiLesson, Kanji, KanjiWord
@@ -35,7 +36,7 @@ class LessonForm(forms.ModelForm):
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ['name', 'description']
+        fields = ['name', 'description', 'topicType']
 
 
 class ExampleForm(forms.ModelForm):

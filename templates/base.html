@@ -9,6 +9,7 @@
     <script src="{% bootstrap_jquery_url %}"></script>
     <script src="{% static "jquery-ui/js/jquery-ui-1.10.4.custom.js" %}"></script>
     <script src="{% static "js/baseNav.js" %}"></script>
+    <script src="{% static "js/cookie.js" %}"></script>
     {% block custom_inculde %}
     {% endblock %}
     {% bootstrap_css %}
@@ -38,8 +39,8 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Class<b class="caret"></b></a>
           <ul class="dropdown-menu">
-           <li> <a href="{% url 'note.views.home' %}"><span class="glyphicon glyphicon-comment"></span>Bunpou</a></li>
-            <li><a href="{% url 'note.kanjiviews.kanjiLessons' %}"><span class="glyphicon glyphicon-pencil"></span>Kanji</a></li>
+           <li> <a href="{% url 'note.views.home' %}"><span class="glyphicon glyphicon-comment"></span> Bunpou</a></li>
+            <li><a href="{% url 'note.kanjiviews.kanjiLessons' %}"><span class="glyphicon glyphicon-pencil"></span> Kanji</a></li>
           </ul>
         </li>
           </ul>
@@ -53,13 +54,13 @@
     <nav class="leftnav" role="main">
     <ul id="sidenav01" class="accordion nav nav-department nav-tabs nav-stacked">
         <li>
-            <a href="{% url 'note.views.addLevel' %}"><span class="glyphicon glyphicon-star-empty"></span>Levels</a>
+            <a href="{% url 'note.views.addLevel' %}"><span class="glyphicon glyphicon-star-empty"></span> Levels</a>
         </li>
         <li>
-            <a href="{% url 'note.views.sensei' %}"><span class="glyphicon glyphicon-user"></span>Senseis</a>
+            <a href="{% url 'note.views.sensei' %}"><span class="glyphicon glyphicon-user"></span> Senseis</a>
         </li>
         <li>
-            <a href="{% url 'note.views.addBooks' %}"><span class="glyphicon glyphicon-book"></span>Books</a>
+            <a href="{% url 'note.views.addBooks' %}"><span class="glyphicon glyphicon-book"></span> Books</a>
         </li>
     </ul>
 </nav>

@@ -1,0 +1,12 @@
+# -*- coding: utf-8 -*-
+#CONST AND SETTINGS
+
+
+ACTUAL_KANJI_TO_SHOW = 20
+
+DICTIONARY_TYPE = 'Словарь'
+GRAMMAR_TYPE = 'Грамматика'
+SHIKENN3_TYPE = 'N3'
+
+
+ANSWER_ACTION='Answer'

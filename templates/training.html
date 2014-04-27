@@ -1,0 +1,41 @@
+{% extends "basebunpou.html" %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+{% block custom_inculde %}
+{% endblock %}
+{% block content %}
+    <h3>Training:</h3>
+    <div style = "text-align: center;">
+        <p>{{ content.translation }}</p>
+        <p style="font-size: 80px;">{{ content.question }}</p>
+    </div>
+    <div>
+        <form role="answer" id="answerField" style="width: 200px; margin:auto;" class="form-horizontal" method="POST" action= "" name="answer">
+            {% csrf_token %}
+            <input type="hidden" value="Answer" name="action">
+            <div class="form-group">
+                <label></label>
+                <input type="text" name="answer" class="form-control" placeholder="Answer">
+                <span class="help-block"></span>
+            </div>
+        </form>
+    </div>
+    {% if content.result %}
+        <div style = "text-align: center;">
+            <h1 style="color:{% if content.result == 'Correct' %}green{% else %}red{% endif %};">{{ content.result }}</h1>
+            <p>Previous word was : <span style="font-size: 25px;">{{ content.prev_question }}</span></p>
+            <p>Answer was : <span style="font-size: 25px;">{{ content.prev_answer }}</span></p>
+        </div>
+    {% endif %}
+    <div>
+       <form role="reset" method="post" action= "" name="reset" class="form-horizontal">
+        {% csrf_token %}
+        <input type="hidden" value="Reset" name="action">
+        {% buttons %}
+        <button type="submit" class="btn btn-default btn-lg center-block">
+            {% bootstrap_icon "ok" %} Finish Training
+        </button>
+        {% endbuttons %}
+    </form>
+    </div>
+{% endblock %}

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.core.urlresolvers import reverse
 # Create your models here.
@@ -84,10 +85,18 @@ class Lesson(models.Model):
         return reverse('note.views.lessons', args=[str(self.level.id),str(self.id)])
 
 
+class TopicType(models.Model):
+    name = models.CharField(max_length=30)
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+
 class Topic(models.Model):
     lesson = models.ForeignKey('Lesson')
     name = models.CharField(max_length=100)
     description = models.TextField(null=True)
+    topicType = models.ForeignKey('TopicType', null=False)
 
     def __unicode__(self):
         return self.name
@@ -180,4 +189,15 @@ class KanjiQuizze(models.Model):
 
     class Meta:
         db_table = 'incul_kanjquizze'
+        ordering = ['date']
+
+
+class TrainingAnswer(models.Model):
+    sessionKey = models.CharField(max_length=30,null=False)
+    content = models.CharField(max_length=300, null=False)
+    answer = models.CharField(max_length=300, null=False)
+    date = models.DateField(null=False)
+
+    class Meta:
+        db_table = 'incul_trainingAnswer'
         ordering = ['date']
