@@ -11,5 +11,5 @@ This is a simple django application, there is no description for avarage user ho
 Changelog:
 
 05.05.2014
-After i've heard some wishes it was decided to emplement english study funsctionality.
+After i've heard some wishes it was decided to implement english study functionality.
 Right now just "new-word-reminder" style.
