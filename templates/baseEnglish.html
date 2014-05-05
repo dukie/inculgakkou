@@ -4,38 +4,22 @@
 
 {% block topnav-left %}
 
-    <li><a href="{% url 'note.views.home' %}"><span class="glyphicon glyphicon-home"></span>Home</a></li>
-    <li><a><span class="glyphicon glyphicon-stats"></span> {{ content.levelName }}</a></li>
+    <li><a href="{% url 'note.views.englishWordsChapter' %}"><span class="glyphicon glyphicon-home"></span>　ホーム</a></li>
 
     <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Training<b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">練習<b class="caret"></b></a>
         <ul class="dropdown-menu">
             <li>
-                <a href="{% url 'note.trainingsViews.dictionary' %}"><span class="glyphicon glyphicon-book"></span>
-                    Dictionary</a>
-            </li>
-            <li>
-                <a href="{% url 'note.trainingsViews.grammar' %}"><span class="glyphicon glyphicon-font"></span> Bunpou</a>
-            </li>
-            <li>
-                <a href="{% url 'note.trainingsViews.shikenN3' %}"><span class="glyphicon glyphicon-tower"></span>
-                    N3</a>
+                <a href="{% url 'note.trainingsViews.englishWords' %}"><span class="glyphicon glyphicon-book"></span> 辞書</a>
+                <a href="{% url 'note.trainingsViews.englishExamples' %}"><span
+                        class="glyphicon glyphicon-th-list"></span> 試供品</a>
+
             </li>
         </ul>
     </li>
 {% endblock %}
 
-{% block topnav-right %}
-    <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Level<b class="caret"></b></a>
-        <ul class="dropdown-menu">
-            {% for level in content.levels %}
-                <li {% if level.name == content.levelName %} class="active"{% endif %}><a
-                        href="{{ level.get_absolute_url }}">{{ level.name }}</a></li>
-            {% endfor %}
-        </ul>
-    </li>
-{% endblock %}
+
 {% block leftnav %}
     <nav class="leftnav" role="main">
         <ul id="sidenav01" class="accordion nav nav-department nav-tabs nav-stacked">
@@ -62,12 +46,6 @@
 
     </nav>
 {% endblock %}
-
-
-
-
-
-
 
 <section id="main">
     {% block content %}

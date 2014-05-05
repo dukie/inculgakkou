@@ -1,0 +1,40 @@
+{% extends "baseEnglish.html" %}
+{% load bootstrap3 %}
+{% load staticfiles %}
+{% block content %}
+    <h3>練習の章を選択してください:</h3>
+    <div class="btn-group" data-toggle="radio">
+        <table class="table">
+            <thead>
+            <tr>
+                <th></th>
+                <th>日付</th>
+                <th>言葉はからまで</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for chapter in content.chapters %}
+                <tr>
+                    <td><input type="radio" name="options" id="{{ chapter.id }}"></td>
+                    <td>{{ chapter.date }}</td>
+                    <td>{{ chapter.contentName }}</td>
+                    <td>{{ chapter.book }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(function () {
+            $('.btn-group').click(function () {
+                var inputButton = $('input:checked');
+                if (inputButton.attr('id')) {
+                    console.log(inputButton);
+                    $.cookie('topic', inputButton.attr('id'), {path: '/'});
+                    window.location = document.baseURI;
+                }
+            })
+        });
+    </script>
+{% endblock %}

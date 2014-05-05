@@ -5,8 +5,8 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from KanjiToHiragana import Converter
-from note.forms import LevelForm, SenseiForm, LessonForm, TopicForm, ExampleForm, BookForm
-from note.models import Level, Lesson, Topic, Example, Sensei, Book, KanjiWord
+from note.forms import LevelForm, SenseiForm, LessonForm, TopicForm, ExampleForm, BookForm, EnglishWordsChapterForm, EnglishWordForm
+from note.models import Level, Lesson, Topic, Example, Sensei, Book, KanjiWord, EnglishWordsChapter, EnglishWord
 
 
 def home(request):
@@ -214,6 +214,63 @@ def addBooks(request):
     form = BookForm()
 
     return render(request, 'addBooks.html',
+                  {
+                      'form': form,
+                      'content': context
+                  })
+
+
+def englishWordsChapter(request, chapterId=None):
+    chapters = EnglishWordsChapter.objects.all()
+    context = {
+        'chapters': chapters
+    }
+    if request.method == 'POST':
+        form = EnglishWordsChapterForm(request.POST)
+        if form.is_valid():
+            if chapterId:
+                englishWordsChapterObj = EnglishWordsChapter.objects.get(pk=chapterId)
+                form = EnglishWordsChapterForm(request.POST, instance=englishWordsChapterObj)
+            form.save()
+            return redirect('englishWordsChapter')
+    else:
+        if chapterId:
+            englishWordsChapterObj = EnglishWordsChapter.objects.get(pk=chapterId)
+            form = EnglishWordsChapterForm(instance=englishWordsChapterObj)
+        else:
+            form = EnglishWordsChapterForm()
+    return render(request, 'englishChapter.html',
+                  {
+                      'form': form,
+                      'content': context
+                  })
+
+
+def englishWords(request, chapterId=None, wordId=None):
+    chapter = get_object_or_404(EnglishWordsChapter, pk=chapterId)
+    context = {
+        'words': EnglishWord.objects.filter(chapter=chapter)
+    }
+    if request.method == 'POST':
+        form = EnglishWordForm(request.POST)
+        if form.is_valid():
+            if wordId:
+                word = get_object_or_404(EnglishWord, pk=wordId)
+                form = EnglishWordForm(request.POST, instance=word)
+            else:
+                form = EnglishWordForm(request.POST)
+                form = form.save(commit=False)
+                form.chapter = chapter
+            form.save()
+            return redirect('englishWords', str(chapter.pk))
+    else:
+        if wordId:
+            word = EnglishWord.objects.get(pk=wordId)
+            form = EnglishWordForm(instance=word)
+        else:
+            form = EnglishWordForm()
+
+    return render(request, 'englishWord.html',
                   {
                       'form': form,
                       'content': context

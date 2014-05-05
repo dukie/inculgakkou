@@ -6,7 +6,7 @@ Feature: Levels
     Given I am a visitor
     When I visit url "http://localhost:8081/incul/"
     When I click link contents "Settings"
-    When I click link contents " Senseis"
+    When I click link contents "Senseis"
     Then I should see "List of senseis" somewhere in page
     When I input "Test Sensei" in "FullName" field
     When I input "First'" in "FirstName" field
@@ -24,7 +24,7 @@ Feature: Levels
     Given I am a visitor
     When I visit url "http://localhost:8081/incul/"
     When I click link contents "Settings"
-    When I click link contents " Levels"
+    When I click link contents "Levels"
     Then I should see "Lessons List" somewhere in page
     When I input "Test Level" in "Name" field
     When I input "04/19/2014" in "StartPeriod" field

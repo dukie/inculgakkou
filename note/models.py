@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 from django.db import models
 from django.core.urlresolvers import reverse
 # Create your models here.
@@ -82,7 +83,7 @@ class Lesson(models.Model):
         return reverse('note.views.topics', args=[str(self.id)])
 
     def get_edit_url(self):
-        return reverse('note.views.lessons', args=[str(self.level.id),str(self.id)])
+        return reverse('note.views.lessons', args=[str(self.level.id), str(self.id)])
 
 
 class TopicType(models.Model):
@@ -159,7 +160,7 @@ class Kanji(models.Model):
         return reverse('note.kanjiviews.kanjiWords', args=[str(self.id)])
 
     def get_edit_url(self):
-        return reverse('note.kanjiviews.kanjiList', args=[str(self.lesson.pk),str(self.id)])
+        return reverse('note.kanjiviews.kanjiList', args=[str(self.lesson.pk), str(self.id)])
 
 
 class KanjiWord(models.Model):
@@ -174,15 +175,14 @@ class KanjiWord(models.Model):
         ordering = ['relatedKanji']
 
     def get_edit_url(self):
-        return reverse('note.kanjiviews.kanjiWords', args=[str(self.relatedKanji.pk),str(self.id)])
+        return reverse('note.kanjiviews.kanjiWords', args=[str(self.relatedKanji.pk), str(self.id)])
 
     def __unicode__(self):
         return self.writing
 
 
 class KanjiQuizze(models.Model):
-
-    sessionKey = models.CharField(max_length=30,null=False)
+    sessionKey = models.CharField(max_length=30, null=False)
     content = models.CharField(max_length=30, null=False)
     answer = models.CharField(max_length=30, null=False)
     date = models.DateField(null=False)
@@ -193,7 +193,7 @@ class KanjiQuizze(models.Model):
 
 
 class TrainingAnswer(models.Model):
-    sessionKey = models.CharField(max_length=30,null=False)
+    sessionKey = models.CharField(max_length=30, null=False)
     content = models.CharField(max_length=300, null=False)
     answer = models.CharField(max_length=300, null=False)
     date = models.DateField(null=False)
@@ -201,3 +201,33 @@ class TrainingAnswer(models.Model):
     class Meta:
         db_table = 'incul_trainingAnswer'
         ordering = ['date']
+
+
+class EnglishWordsChapter(models.Model):
+    contentName = models.CharField(max_length=20)
+    book = models.ForeignKey('Book', null=True)
+    date = models.DateField(null=False, default=datetime.date.today)
+
+    class Meta:
+        ordering = ['date']
+
+    def get_absolute_url(self):
+        return reverse('note.views.englishWords', args=[str(self.id)])
+
+    def get_edit_url(self):
+        return reverse('note.views.englishWordsChapter', args=[str(self.id)])
+
+
+class EnglishWord(models.Model):
+    chapter = models.ForeignKey('EnglishWordsChapter', null=False)
+    verbEng = models.CharField(max_length=30, null=True)
+    verbJp = models.CharField(max_length=100, null=True)
+    nounEng = models.CharField(max_length=30, null=True)
+    nounJp = models.CharField(max_length=100, null=True)
+    adjEng = models.CharField(max_length=30, null=True)
+    adjJp = models.CharField(max_length=100, null=True)
+    exampleEng = models.CharField(max_length=300, null=True)
+    exampleJp = models.CharField(max_length=300, null=True)
+
+    def get_edit_url(self):
+        return reverse('note.views.englishWords', args=[str(self.chapter.id), str(self.id)])

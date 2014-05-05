@@ -1,24 +1,26 @@
-{% extends "basebunpou.html" %}
+{% extends "baseEnglish.html" %}
 {% load bootstrap3 %}
 {% block content %}
-    <h3>List of bunpou lessons</h3>
+    <h3>単語のリスト</h3>
     <table class="table">
         <thead>
         <tr>
             <th></th>
-            <th>#</th>
-            <th>Date</th>
-            <th>Sensei</th>
+            <th>動詞</th>
+            <th>名詞</th>
+            <th>形容詞</th>
+            <th>例</th>
 
         </tr>
         </thead>
         <tbody>
-        {% for lesson in content.lessonsList %}
+        {% for word in content.words %}
             <tr>
-                <td><a href="{{ lesson.get_edit_url }}"><span class="glyphicon glyphicon-edit"></span></a></td>
-                <td><a href="{{ lesson.get_absolute_url }}">{{ lesson.date }}</a></td>
-                <td>{{ lesson.chapterNumber }}</td>
-                <td>{{ lesson.sensei }}</td>
+                <td><a href="{{ word.get_edit_url }}"><span class="glyphicon glyphicon-edit"></span></a></td>
+                <td>{{ word.verbEng }}</td>
+                <td>{{ word.nounEng }}</td>
+                <td>{{ word.adjEng }}</td>
+                <td>{{ word.exampleEng }}</td>
 
             </tr>
         {% endfor %}

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.admin import widgets
-from note.models import Sensei, Lesson, Topic, Example, Book, Level, KanjiLesson, Kanji, KanjiWord
+from note.models import Sensei, Lesson, Topic, Example, Book, Level, KanjiLesson, Kanji, KanjiWord, EnglishWordsChapter, EnglishWord
 
 
 class LevelForm(forms.ModelForm):
@@ -77,3 +77,35 @@ class KanjiWordsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(KanjiWordsForm, self).__init__(*args, **kwargs)
         self.fields['shikenLevel'].widget.is_required = False
+
+
+class EnglishWordsChapterForm(forms.ModelForm):
+    contentName = forms.CharField(required=True, label=u"言葉番号範囲",
+                                  widget=forms.TextInput(attrs={'placeholder': '選択した本の言葉番号範囲'}))
+
+    class Meta:
+        model = EnglishWordsChapter
+        fields = ['book', 'contentName']
+
+    def __init__(self, *args, **kwargs):
+        super(EnglishWordsChapterForm, self).__init__(*args, **kwargs)
+        #self.fields['date'].widget.is_required = False
+        self.fields['book'].label = u'本を選択してください'
+
+
+class EnglishWordForm(forms.ModelForm):
+    verbEng = forms.CharField(required=True, label=u"英語の動詞", widget=forms.TextInput(attrs={'placeholder': '英語の動詞'}))
+    verbJp = forms.CharField(required=True, label=u"日本語の動詞", widget=forms.TextInput(attrs={'placeholder': '日本語の動詞'}))
+    nounEng = forms.CharField(required=False, label=u"英語の名詞", widget=forms.TextInput(attrs={'placeholder': '語の名詞'}))
+    nounJp = forms.CharField(required=False, label=u"日本語の名詞", widget=forms.TextInput(attrs={'placeholder': '日本語の名詞'}))
+    adjEng = forms.CharField(required=False, label=u"英語の形容詞", widget=forms.TextInput(attrs={'placeholder': '英語の形容詞'}))
+    adjJp = forms.CharField(required=False, label=u"日本語の形容詞", widget=forms.TextInput(attrs={'placeholder': '英語の形容詞'}))
+    exampleEng = forms.CharField(required=True, label=u"英語の例", widget=forms.TextInput(attrs={'placeholder': '英語の例'}))
+    exampleJp = forms.CharField(required=True, label=u"日本語の例", widget=forms.TextInput(attrs={'placeholder': '日本語の例'}))
+
+    class Meta:
+        model = EnglishWord
+        fields = ['verbEng', 'verbJp', 'nounEng', 'nounJp', 'adjEng', 'adjJp', 'exampleEng', 'exampleJp']
+
+    def __init__(self, *args, **kwargs):
+        super(EnglishWordForm, self).__init__(*args, **kwargs)

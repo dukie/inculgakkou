@@ -2,16 +2,18 @@
 {% load bootstrap3 %}
 {% load staticfiles %}
 {% block custom_inculde %}
-   <script src="{% static "js/kanjiq.js" %}"></script>
+    <script src="{% static "js/kanjiq.js" %}"></script>
 {% endblock %}
 {% block content %}
     <h3>Kanji quizze</h3>
-    <div style = "text-align: center;">
+    <div style="text-align: center;">
         <p>{{ content.translation }}</p>
+
         <p style="font-size: 80px;">{{ content.question }}</p>
     </div>
     <div>
-        <form role="answer" id="answerField" style="width: 200px; margin:auto;" class="form-horizontal">
+        <form role="answer" autocomplete="off" id="answerField" style="width: 200px; margin:auto;"
+              class="form-horizontal">
             <div class="form-group">
                 <label></label>
                 <input type="text" class="form-control" placeholder="Answer">
@@ -20,9 +22,11 @@
         </form>
     </div>
     {% if content.result %}
-        <div style = "text-align: center;">
+        <div style="text-align: center;">
             <h1 style="color:{% if content.result == 'Correct' %}green{% else %}red{% endif %};">{{ content.result }}</h1>
+
             <p>Previous word was : <span style="font-size: 25px;">{{ content.prev_question }}</span></p>
+
             <p>Answer was : <span style="font-size: 25px;">{{ content.prev_answer }}</span></p>
         </div>
     {% endif %}
