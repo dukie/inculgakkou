@@ -25,7 +25,7 @@
     </div>
     {% if content.result %}
         <div style="text-align: center;">
-            <h1 style="color:{% if content.result == '正しい' %}green{% else %}red{% endif %};">{{ content.result }}</h1>
+            <h1 style="color:{% if content.result == '正解です' %}green{% else %}red{% endif %};">{{ content.result }}</h1>
 
             <p>先決問題: <span style="font-size: 25px;">{{ content.prev_question }}</span></p>
 

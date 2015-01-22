@@ -1,15 +1,9 @@
-inculgakkou
-=========
+#Intercultural Gakkou Web App#
 
-Simple application which helps to study in Intercultural Institute of Japan    
-Unfortunately they don't have proper infrastructure for people who want  use laptops during studing, so this app should make your study process more easy, at least i hope so.
-
-
-This is a simple django application, there is no description for avarage user how to use, i will add it later.
+Simple application which helps to study in Intercultural Institute of Japan
+Unfortunately they don't have proper infrastructure for people who want use laptops during studying, so this app should make your study process more easy, at least i hope so.
 
 
-Changelog:
+This README would normally document whatever steps are necessary to get your application up and running.
 
-05.05.2014
-After i've heard some wishes it was decided to implement english study functionality.
-Right now just "new-word-reminder" style.
+However this is a simple django application, there is no description for average user how to use, i will add it later.

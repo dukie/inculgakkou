@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import datetime
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.core.urlresolvers import reverse
-# Create your models here.
+from django.contrib.auth.models import User
+from django.utils import timezone, importlib
+from note.settings import behaviorsClasses
 
 
 class Sex(models.Model):
@@ -14,6 +17,13 @@ class Sex(models.Model):
 
     def __unicode__(self):
         return self.sexName
+
+
+class UserSettings(models.Model):
+    user = models.ForeignKey(User)
+    currentKanjiLesson = models.PositiveIntegerField(max_length=5, default=500)
+    currentHomeClassChapter = models.PositiveIntegerField(max_length=5, default=500)
+    currentLevel = models.ForeignKey('Level')
 
 
 class Sensei(models.Model):
@@ -61,9 +71,6 @@ class Level(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_absolute_url(self):
-        return reverse('note.views.lessons', args=[str(self.id)])
-
 
 class Lesson(models.Model):
     level = models.ForeignKey('Level')
@@ -76,8 +83,8 @@ class Lesson(models.Model):
         db_table = 'incul_lesson'
         ordering = ['chapterNumber']
 
-    def __unicode__(self):
-        return unicode(self.chapterNumber)
+    def __str__(self):
+        return str(self.chapterNumber)
 
     def get_absolute_url(self):
         return reverse('note.views.topics', args=[str(self.id)])
@@ -89,8 +96,11 @@ class Lesson(models.Model):
 class TopicType(models.Model):
     name = models.CharField(max_length=30)
 
+    def __str__(self):
+        return self.name
+
     def __unicode__(self):
-        return unicode(self.name)
+        return self.name
 
 
 class Topic(models.Model):
@@ -98,6 +108,9 @@ class Topic(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True)
     topicType = models.ForeignKey('TopicType', null=False)
+
+    def __str__(self):
+        return self.name
 
     def __unicode__(self):
         return self.name
@@ -157,9 +170,15 @@ class Kanji(models.Model):
         ordering = ['number']
 
     def get_absolute_url(self):
+        #if not hasattr(self, 'absoluteUrl'):
+        #    self.absoluteUrl = reverse('note.kanjiviews.kanjiWords', args=[str(self.id)])
+        #return self.absoluteUrl
         return reverse('note.kanjiviews.kanjiWords', args=[str(self.id)])
 
     def get_edit_url(self):
+        #if not hasattr(self, 'editUrl'):
+        #    self.editUrl = reverse('note.kanjiviews.kanjiList', args=[str(self.lesson.pk), str(self.id)])
+        #return self.editUrl
         return reverse('note.kanjiviews.kanjiList', args=[str(self.lesson.pk), str(self.id)])
 
 
@@ -231,3 +250,77 @@ class EnglishWord(models.Model):
 
     def get_edit_url(self):
         return reverse('note.views.englishWords', args=[str(self.chapter.id), str(self.id)])
+
+
+class TestEntity(models.Model):
+    testSuit = models.ForeignKey('TestSuit')
+    entityId = models.PositiveIntegerField(null=False)
+    points = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = 'incul_TEST_entity'
+
+
+class TestCurrentQuestion(models.Model):
+    creationDate = models.DateTimeField(null=False, default=timezone.now())
+    question = models.CharField(max_length=100, null=False)
+    answer = models.CharField(max_length=100, null=False)
+    hint = models.CharField(max_length=200, null=False)
+    entityId = models.ForeignKey('TestEntity', null=True)
+
+    def save(self, *args, **kwargs):
+        self.creationDate = timezone.now()
+        super(TestCurrentQuestion, self).save(*args, **kwargs)
+
+    class Meta:
+        db_table = 'incul_TEST_currentQuestion'
+        ordering = ['creationDate']
+
+
+class TestSuit(models.Model):
+    creationDate = models.DateTimeField(null=False, default=timezone.now())
+    currentStep = models.PositiveIntegerField(default=0)
+    user = models.ForeignKey(User)
+    isActive = models.BooleanField(default=False)
+    testingEntityCT = models.ForeignKey(ContentType, null=False)
+    points = models.IntegerField(default=0)
+    currentQuestion = models.OneToOneField('TestCurrentQuestion', related_name='testSuit')
+    topic = models.ForeignKey('TestTopics')
+
+    class Meta:
+        ordering = ['creationDate']
+        db_table = 'incul_TEST_suit'
+
+    @classmethod
+    def create(cls):
+        ts = cls()
+        ts.creationDate = timezone.now()
+        ts.currentQuestion = TestCurrentQuestion()
+        return ts
+
+    def save(self, *args, **kwargs):
+        self.currentQuestion.save()
+        self.currentQuestion = self.currentQuestion
+        super(TestSuit, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.currentQuestion.delete()
+        super(TestSuit, self).delete(*args, **kwargs)
+
+
+class TestTopics(models.Model):
+    topicCT = models.ForeignKey(ContentType, null=False)
+    title = models.CharField(max_length=30, null=False)
+    questionField = models.CharField(max_length=30, null=True)
+    answerField = models.CharField(max_length=30, null=True)
+    hintField = models.CharField(max_length=30, null=True)
+    testBehaviorClass = models.CharField(max_length=30, null=True)
+
+    def createBehaviorObject(self):
+        importPath = behaviorsClasses[self.testBehaviorClass]
+        behaveModule = importlib.import_module(importPath)
+        return behaveModule.Behavior()
+
+    class Meta:
+        ordering = ['id']
+        db_table = 'incul_TEST_topics'

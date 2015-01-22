@@ -5,8 +5,9 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from KanjiToHiragana import Converter
-from note.forms import LevelForm, SenseiForm, LessonForm, TopicForm, ExampleForm, BookForm, EnglishWordsChapterForm, EnglishWordForm
-from note.models import Level, Lesson, Topic, Example, Sensei, Book, KanjiWord, EnglishWordsChapter, EnglishWord
+from note.forms import LevelForm, SenseiForm, LessonForm, TopicForm, ExampleForm, BookForm, EnglishWordsChapterForm, EnglishWordForm, UserSettingsForm
+from note.models import Level, Lesson, Topic, Example, Sensei, Book, KanjiWord, EnglishWordsChapter, EnglishWord, UserSettings
+from note.utils import getUserSettings, goToSettings
 
 
 def home(request):
@@ -14,9 +15,12 @@ def home(request):
     return redirect(level)
 
 
-def lessons(request, levelId, lessonId=None):
-    level = get_object_or_404(Level, pk=levelId)
-    lessons = Lesson.objects.filter(level=level)
+def lessons(request, lessonId=None):
+    userSet = getUserSettings(request.user)
+    if not userSet:
+        return goToSettings()
+    level = userSet.currentLevel
+    lessons = Lesson.objects.select_related('level', 'sensei').filter(level=level).order_by('date')
     context = {
         'levelName': level.name,
         'lessonsList': lessons,
@@ -33,7 +37,7 @@ def lessons(request, levelId, lessonId=None):
             lesson = form.save(commit=False)
             lesson.level = level
             lesson.save()
-            return redirect('lessons', str(level.pk))
+            return redirect('lessons')
     else:
         if lessonId:
             lesson = Lesson.objects.get(pk=lessonId)
@@ -50,7 +54,7 @@ def lessons(request, levelId, lessonId=None):
 
 def topics(request, lessonId, topicId=None):
     lesson = get_object_or_404(Lesson, pk=lessonId)
-    topics = Topic.objects.filter(lesson=lesson)
+    topics = Topic.objects.select_related('lesson', 'topicType').filter(lesson=lesson)
     context = {
         'levelName': lesson.level.name,
         'lessonNumber': lesson.chapterNumber,
@@ -85,7 +89,7 @@ def topics(request, lessonId, topicId=None):
 
 def examples(request, topicId, exampleId=None):
     topic = get_object_or_404(Topic, pk=topicId)
-    examples = Example.objects.filter(topic=topic)
+    examples = Example.objects.select_related('topic').filter(topic=topic)
     context = {
         'levelName': topic.lesson.level.name,
         'levels': Level.objects.all(),
@@ -158,8 +162,35 @@ def addLevel(request):
                   })
 
 
+def userSettings(request):
+    context = {}
+    if request.method == 'POST':
+        form = UserSettingsForm(request.POST)
+        if form.is_valid():
+            try:
+                userSet = UserSettings.objects.get(user=request.user)
+                form = UserSettingsForm(request.POST, instance=userSet)
+                updateSettings = form.save(commit=False)
+            except UserSettings.DoesNotExist:
+                updateSettings = form.save(commit=False)
+                updateSettings.user = request.user
+            updateSettings.save()
+    else:
+        try:
+            userSet = UserSettings.objects.get(user=request.user)
+            form = UserSettingsForm(instance=userSet)
+        except UserSettings.DoesNotExist:
+            form = UserSettingsForm()
+
+    return render(request, 'userSettings.html',
+                  {
+                      'form': form,
+                      'content': context
+                  })
+
+
 def sensei(request, senseiId):
-    senseis = Sensei.objects.all()
+    senseis = Sensei.objects.select_related('sex').all()
     context = {
         'senseis': senseis
     }
@@ -188,7 +219,6 @@ def sensei(request, senseiId):
 
 def convert(request):
     if request.method == 'POST':
-        print request
         kanji = request.POST['kanji']
     converter = Converter.Converter()
     hiragana = converter.getHiragana(kanji)
@@ -221,7 +251,7 @@ def addBooks(request):
 
 
 def englishWordsChapter(request, chapterId=None):
-    chapters = EnglishWordsChapter.objects.all()
+    chapters = EnglishWordsChapter.objects.select_related('book').all()
     context = {
         'chapters': chapters
     }
@@ -249,7 +279,7 @@ def englishWordsChapter(request, chapterId=None):
 def englishWords(request, chapterId=None, wordId=None):
     chapter = get_object_or_404(EnglishWordsChapter, pk=chapterId)
     context = {
-        'words': EnglishWord.objects.filter(chapter=chapter)
+        'words': EnglishWord.objects.select_related('chapter').filter(chapter=chapter)
     }
     if request.method == 'POST':
         form = EnglishWordForm(request.POST)

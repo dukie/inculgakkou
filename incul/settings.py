@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from django.core.urlresolvers import reverse_lazy
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
@@ -25,7 +27,7 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1',]
 
 
 # Application definition
@@ -37,24 +39,43 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #debug
+    #'debug_toolbar',
+    'ajax_select',
     'note',
     'bootstrap3',
     'django_behave',
 )
 
+
+"""CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    }
+}"""
+
 MIDDLEWARE_CLASSES = (
+    #'middleware.cache.SmartUpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'middleware.loginRequired.LoginRequiredMiddleware',
+    #'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'incul.urls'
 
 #WSGI_APPLICATION = 'incul.wsgi.application'
 
+# Exception for login required middleware
+LOGIN_EXEMPT_URLS = (
+#r'^incul/kanji/$',
+#r'^here/i/can/enter/without/auth\.html$',
+)
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
@@ -66,24 +87,22 @@ DATABASES = {
         'TEST_NAME': 'TEST',
     },
 }
-
+LOGIN_URL = reverse_lazy('login')
+LOGIN_REDIRECT_URL = reverse_lazy('home')
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_URL = '/incul/static/'
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
@@ -95,10 +114,9 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-
 BOOTSTRAP3 = {
     'jquery_url': "/incul/static/js/jquery-1.11.0.js",
-    'base_url':  "/incul/static/bootstrap/",
+    'base_url': "/incul/static/bootstrap/",
     'css_url': None,
     'theme_url': None,
     'javascript_url': None,
@@ -124,12 +142,12 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         },
-	'file': {
+        'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': '/tmp/sqlDJ.log',
         },
-    'fileLog': {
+        'fileLog': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filename': '/tmp/vkursaxError.log',
@@ -141,13 +159,21 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-	'django.db.backends': {
-            'level':'DEBUG',
+        'django.db.backends': {
+            'level': 'DEBUG',
             'handlers': ['file'],
             'propagate': False,
         }
     }
 }
 FIXTURE_DIRS = (
-   os.path.join(BASE_DIR, "incul/fixtures/"),
+    os.path.join(BASE_DIR, "incul/fixtures/"),
 )
+
+
+AJAX_LOOKUP_CHANNELS = {
+    #  simple: search Person.objects.filter(name__icontains=q)
+    'fieldsLookup' : ('ajax.lookups', 'TestElementsFieldsLookup'),
+    'settingsFieldsLookup': ('ajax.lookups', 'SettingsFieldsLookup')
+    # define a custom lookup channel
+}

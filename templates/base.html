@@ -1,5 +1,6 @@
 {% load bootstrap3 %}
 {% load staticfiles %}
+{% load ajax_extra %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -14,9 +15,12 @@
     {% endblock %}
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+    {% block title %}
+        <title>Inculgakko</title>
+    {% endblock %}
     <link rel="stylesheet" href="{% static "css/base.css" %}">
     <link rel="stylesheet" href="{% static "jquery-ui/css/ui-lightness/jquery-ui-1.10.4.custom.css" %}">
-
+    {# {% ajax %} #}
     {# Display django.contrib.messages as Bootstrap alerts #}
     {% bootstrap_messages %}
 </head>
@@ -24,6 +28,15 @@
 <body>
 <div>
     <img id="logo" src="{% static "media/images/logo.jpg" %}" alt="Logo"/>
+</div>
+<div class="userCorner">
+    {% block userCorner %}
+        {% if user.is_authenticated %}
+            <div class="userCornerText">
+                Logged as <span>{{ user }}</span>. <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        {% endif %}
+    {% endblock %}
 </div>
 <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
@@ -55,12 +68,16 @@
                             <a href="{% url 'note.views.addBooks' %}"><span class="glyphicon glyphicon-book"></span>
                                 Books</a>
                         </li>
+                        <li>
+                            <a href="{% url 'note.views.userSettings' %}"><span class="glyphicon glyphicon-eye-open"></span>
+                                User Settings</a>
+                        </li>
                     </ul>
                 </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Class<b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{% url 'note.views.home' %}"><span class="glyphicon glyphicon-comment"></span>
+                        <li><a href="{% url 'note.views.lessons' %}"><span class="glyphicon glyphicon-comment"></span>
                             Bunpou</a></li>
                         <li><a href="{% url 'note.kanjiviews.kanjiLessons' %}"><span
                                 class="glyphicon glyphicon-pencil"></span> Kanji</a></li>

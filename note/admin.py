@@ -2,7 +2,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from note.models import Sex, Sensei, Book, Level, Lesson, Topic, Example
+from note.forms import TestTopicAdminForm
+from note.models import Sex, Sensei, Book, Level, Lesson, Topic, Example, TestTopics
 
 
 class SexAdmin(admin.ModelAdmin):
@@ -53,3 +54,9 @@ class ExampleAdmin(admin.ModelAdmin):
 
 admin.site.register(Example,ExampleAdmin)
 
+
+class TestTopicsAdmin(admin.ModelAdmin):
+    list_display = ['title', 'topicCT']
+    form = TestTopicAdminForm
+
+admin.site.register(TestTopics,TestTopicsAdmin)

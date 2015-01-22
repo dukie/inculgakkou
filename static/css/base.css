@@ -1,26 +1,29 @@
 html {
     overflow-y: scroll;
+    min-width: 980px;
 }
 
 img#logo {
     display: block;
-    margin: 10px auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
 }
 
-nav.leftnav{
-  width: 15%;
-  float: left;
-  display: inline;
-  padding: 0;
-  margin: 0 3% 0 0;
+nav.leftnav {
+    width: 15%;
+    float: left;
+    display: inline;
+    padding: 0;
+    margin: 0 3% 0 0;
 }
 
-section#main{
-  width: 80%;
-  float: left;
-  margin: 0;
-  padding: 0 2% 0 0;
-  display: inline;
+section#main {
+    width: 80%;
+    float: left;
+    margin: 0;
+    padding: 0 2% 0 0;
+    display: inline;
 }
 
 span.kanjiTopic {
@@ -29,4 +32,25 @@ span.kanjiTopic {
 
 span.kanjiCell {
     font-size: 23px;
+}
+
+div.userCorner {
+    margin: 0px;
+    margin-left: auto;
+    padding: 0px;
+    width: 20%;
+    height: 30px;
+    background-color: #f8f8f8;
+    border-radius: 20px 0px 0px 0px;
+    box-shadow: 1px 5px 7px;
+    color: #777;
+}
+
+div.userCornerText {
+    padding-top: 7px;
+    text-align: center;
+}
+
+div.userCornerText > span {
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.28);
 }

@@ -1,18 +1,20 @@
 # -*- coding: utf-8 -*-
 import urllib
-from html import Taker
-import BeautifulSoup
+from KanjiToHiragana.htmlBase import Taker
+import bs4 as BeautifulSoup
+#import urllib
+#from htmlBase import Taker
+#import BeautifulSoup
 __author__ = 'dukie'
 
 
 class Converter(object):
     dataTemplate = {
-            u"uniqid": u"ccff2960280404a4ae4319198eda7d2103b0de26",
-            u"kanji": u"",
-            u"Submit": u"Translate Now",
-            u"kanji_parts": u"unchanged",
-            u"converter": u"spacedrollover",
-            u"kana_output": u"hiragana",
+            "uniqid": "ccff2960280404a4ae4319198eda7d2103b0de26",
+            "Submit": "Translate Now",
+            "kanji_parts": "unchanged",
+            "converter": "spacedrollover",
+            "kana_output": "hiragana",
     }
     def __init__(self):
         self.htmlTaker = Taker()
@@ -20,21 +22,20 @@ class Converter(object):
     def getHiragana(self, kanji):
         headers = [
                        {
-                            "name" : u"Content-Type",
-                            "value": u"application/x-www-form-urlencoded"
-                        }
+                            "name" : "Content-Type",
+                            "value": "application/x-www-form-urlencoded",
+
+                        },
+
         ]
         data = Converter.dataTemplate
-        if type(kanji) == str:
-            data[u'kanji'] = kanji
-        elif type(kanji) == unicode:
-            data[u'kanji'] = kanji.encode("utf-8")
-
-        data = urllib.urlencode(data)
+        data['kanji'] = kanji
+        data = urllib.parse.urlencode(data)
+        data = bytes(data, 'utf-8')
         rawHtml = self.htmlTaker.postHtml(data, url="http://nihongo.j-talk.com/",headers=headers)
         soup = BeautifulSoup.BeautifulSoup(rawHtml)
         elements = soup.find('div', {"id": "rollover", "class":"hiragana"})
-        res = u""
+        res = ""
         for element in elements:
             if type(element) == BeautifulSoup.NavigableString:
                 res += element
@@ -46,7 +47,8 @@ class Converter(object):
 
 if __name__ == '__main__':
     import sys
-
+    print(type("食べ物"))
+    print(type(sys.argv[1]))
     con = Converter()
-    print con.getHiragana(u"食べ物")
-    print con.getHiragana(sys.argv[1])
+    print (con.getHiragana("食べ物"))
+    print (con.getHiragana(sys.argv[1]))

@@ -1,21 +1,81 @@
 # -*- coding: utf-8 -*-
 import random
 from datetime import datetime
+import logging
+
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+
 from note import settings, utils
+from note.forms import NewTestForm, RestoreTestForm, AnswerTestForm, RemoveTestForm
 from note.models import KanjiQuizze, KanjiWord, Example, Level, TrainingAnswer, EnglishWord
+from note.settings import NEW_TEST_ACTION, RESTORE_TEST_ACTION, DESTROY_TEST, TEST_ANSWER
+from note.utils import TrainingFactory, TrainingEngine
+
+
+def trainingView(request):
+    context = {
+        'NewTestForm': NewTestForm()
+    }
+
+    tFactory = TrainingFactory(request.user)
+    if tFactory.isTestInProgress():
+        context['RestoreTestForm'] = RestoreTestForm()
+
+    return render(request, 'training.html', {'content': context})
+
+
+def testProcess(request):
+    logger = logging.getLogger('Train')
+    context = {
+        'RemoveTestForm': RemoveTestForm()
+    }
+    if request.method != 'POST':
+        return HttpResponseRedirect(reverse('trainingView'))
+
+    tFactory = TrainingFactory(request.user)
+    if request.POST['action'] == TEST_ANSWER:
+        answerForm = AnswerTestForm(request.POST)
+        if not answerForm.is_valid():
+            return HttpResponseRedirect(reverse('trainingView'))
+        tEngine = TrainingEngine(tFactory.restoreSuit())
+        previousAnswer = tEngine.getPreviousInfo()
+        previousAnswer['result'] = tEngine.checkAnswer(answerForm.cleaned_data['answer'])
+        question = tEngine.getNewQuestion()
+        context['currentQuestion'] = question
+        context['previousAnswer'] = previousAnswer
+    elif request.POST['action'] == RESTORE_TEST_ACTION:
+        tEngine = TrainingEngine(tFactory.restoreSuit())
+        question = tEngine.getCurrentQuestion()
+        context['currentQuestion'] = question
+    elif request.POST['action'] == DESTROY_TEST:
+        tFactory.destroySuit()
+        return HttpResponseRedirect(reverse('trainingView'))
+    elif request.POST['action'] == NEW_TEST_ACTION:
+        testForm = NewTestForm(request.POST)
+        if not testForm.is_valid():
+            return HttpResponseRedirect(reverse('trainingView'))
+        testSuit = tFactory.createSuit(testForm.cleaned_data['theme'])
+        tEngine = TrainingEngine(testSuit)
+        question = tEngine.getNewQuestion()
+        context['currentQuestion'] = question
+    else:
+        return HttpResponseRedirect(reverse('trainingView'))
+
+    context['AnswerTestForm'] = AnswerTestForm()
+    return render(request, 'trainingProcess.html', {'content': context})
 
 
 def kanjiQuizze(request, answer=None):
     context = {}
-    id = request.COOKIES.get('csrftoken')
-    if not id:
+
+    connectionId = request.COOKIES.get('csrftoken')
+    if not connectionId:
         redirectAdr = reverse('note.views.home')
         return HttpResponseRedirect(redirectAdr)
     try:
-        quizze = KanjiQuizze.objects.get(sessionKey=id)
+        quizze = KanjiQuizze.objects.get(sessionKey=connectionId)
         if answer:
             if quizze.answer == answer:
                 context["result"] = "Correct"
@@ -25,8 +85,8 @@ def kanjiQuizze(request, answer=None):
             context['prev_answer'] = quizze.answer
     except KanjiQuizze.DoesNotExist:
         quizze = KanjiQuizze()
-        quizze.sessionKey = id
-    actualK = [item.pk for item in utils.getActualKanji(settings.ACTUAL_KANJI_TO_SHOW)]
+        quizze.sessionKey = connectionId
+    actualK = [item.pk for item in utils.getActualKanjiList(settings.ACTUAL_KANJI_TO_SHOW)]
     words = KanjiWord.objects.filter(relatedKanji__in=actualK)
     length = len(words) - 1
     random.random()
@@ -45,17 +105,15 @@ def kanjiQuizze(request, answer=None):
     response = render(request, 'kanjiquizzes.html',
                       {
                           'content': context,
-                          'actualKanji': utils.getActualKanji(settings.ACTUAL_KANJI_TO_SHOW)
+                          'actualKanji': utils.getActualKanjiList(settings.ACTUAL_KANJI_TO_SHOW)
                       })
     return response
 
 
 def dictionary(request):
     context = {'levels': Level.objects.all()}
-    print request.COOKIES
-    print request.POST
-    id = request.COOKIES.get('csrftoken')
-    if not id:
+    connectionId = request.COOKIES.get('csrftoken')
+    if not connectionId:
         return utils.goHome()
     topic = request.COOKIES.get('topic')
     if not topic:
@@ -66,13 +124,12 @@ def dictionary(request):
                       })
 
     try:
-        quizze = TrainingAnswer.objects.get(sessionKey=id)
+        quizze = TrainingAnswer.objects.get(sessionKey=connectionId)
     except TrainingAnswer.DoesNotExist:
         quizze = TrainingAnswer()
-        quizze.sessionKey = id
+        quizze.sessionKey = connectionId
 
     if request.method == 'POST':
-        print "POST"
         action = request.POST['action']
         if action == settings.ANSWER_ACTION:
             answer = request.POST['answer']
@@ -91,6 +148,11 @@ def dictionary(request):
 
     try:
         examples = Example.objects.filter(topic__id=topic)
+        if len(examples) == 0:
+            currentURL = reverse('note.trainingsViews.dictionary')
+            response = HttpResponseRedirect(currentURL)
+            response.delete_cookie('topic', '/')
+            return response
         length = len(examples) - 1
         random.random()
         choose = random.randint(0, length)
@@ -108,7 +170,7 @@ def dictionary(request):
         context['answer'] = ans
     except KanjiQuizze.DoesNotExist:
         quizze = TrainingAnswer()
-        quizze.sessionKey = id
+        quizze.sessionKey = connectionId
     response = render(request, 'training.html',
                       {
                           'content': context,
@@ -118,8 +180,8 @@ def dictionary(request):
 
 def grammar(request):
     context = {'levels': Level.objects.all()}
-    id = request.COOKIES.get('csrftoken')
-    if not id:
+    connectionId = request.COOKIES.get('csrftoken')
+    if not connectionId:
         return utils.goHome()
     topic = request.COOKIES.get('topic')
     if not topic:
@@ -159,8 +221,8 @@ def grammar(request):
 
 def shikenN3(request):
     context = {'levels': Level.objects.all()}
-    id = request.COOKIES.get('csrftoken')
-    if not id:
+    connectionId = request.COOKIES.get('csrftoken')
+    if not connectionId:
         return utils.goHome()
     topic = request.COOKIES.get('topic')
     if not topic:
@@ -200,10 +262,8 @@ def shikenN3(request):
 
 def englishWords(request):
     context = {}
-    print request.COOKIES
-    print request.POST
-    id = request.COOKIES.get('csrftoken')
-    if not id:
+    connectionId = request.COOKIES.get('csrftoken')
+    if not connectionId:
         return utils.goHome()
     topic = request.COOKIES.get('topic')
     if not topic:
@@ -214,21 +274,20 @@ def englishWords(request):
                       })
 
     try:
-        quizze = TrainingAnswer.objects.get(sessionKey=id)
+        quizze = TrainingAnswer.objects.get(sessionKey=connectionId)
     except TrainingAnswer.DoesNotExist:
         quizze = TrainingAnswer()
-        quizze.sessionKey = id
+        quizze.sessionKey = connectionId
 
     if request.method == 'POST':
-        print "POST"
         action = request.POST['action']
         if action == settings.ANSWER_ACTION:
             answer = request.POST['answer']
             if answer:
                 if quizze.answer.lower() == answer.lower():
-                    context["result"] = u"正しい"
+                    context["result"] = u"正解です"
                 else:
-                    context["result"] = u"正しくない"
+                    context["result"] = u"間違いです"
                 context['prev_question'] = quizze.content
                 context['prev_answer'] = quizze.answer
         else:
@@ -256,7 +315,7 @@ def englishWords(request):
         context['answer'] = ans
     except KanjiQuizze.DoesNotExist:
         quizze = TrainingAnswer()
-        quizze.sessionKey = id
+        quizze.sessionKey = connectionId
     response = render(request, 'englishTraining.html',
                       {
                           'content': context,

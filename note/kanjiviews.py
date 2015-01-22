@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, redirect, get_object_or_404
-from note import settings
 from note.forms import KanjiLessonForm, KanjiForm, KanjiWordsForm
-from note.models import KanjiLesson, Kanji, KanjiWord, KanjiQuizze
-import utils
+from note.models import KanjiLesson, Kanji, KanjiWord
+from note import utils
+from note.utils import goToSettings
 
 
 def kanjiLessons(request, lessonId=None):
-    lessons = KanjiLesson.objects.all()
+    lessons = KanjiLesson.objects.select_related('sensei').all()
+
     context = {
         'lessonsList': lessons,
     }
@@ -27,21 +28,28 @@ def kanjiLessons(request, lessonId=None):
             form = KanjiLessonForm(instance=lesson)
         else:
             form = KanjiLessonForm()
+    userSet = utils.getUserSettings(request.user)
+    if not userSet:
+        return goToSettings()
+
 
     return render(request, 'kanjilessons.html',
                   {
                       'form': form,
                       'content': context,
-                      'actualKanji': utils.getActualKanji(settings.ACTUAL_KANJI_TO_SHOW)
+                      'actualKanji': utils.getActualKanjiList(userSet)
                   })
 
 
 def kanjiList(request, lessonId, kanjiId=None):
     lesson = get_object_or_404(KanjiLesson, pk=lessonId)
-    kanji = Kanji.objects.filter(lesson=lesson)
+    kanji = Kanji.objects.select_related('lesson').filter(lesson=lesson)
+    total = len(KanjiWord.objects.filter(relatedKanji__in=kanji))
+
     context = {
         'lessonDate': lesson.date,
         'kanjiList': kanji,
+        'totalKanji': total
     }
     if request.method == 'POST':
         form = KanjiForm(request.POST)
@@ -62,17 +70,21 @@ def kanjiList(request, lessonId, kanjiId=None):
         else:
             form = KanjiForm()
 
+    userSet = utils.getUserSettings(request.user)
+    if not userSet:
+        return goToSettings()
+
     return render(request, 'kanjilist.html',
                   {
                       'content': context,
                       'form': form,
-                      'actualKanji': utils.getActualKanji(settings.ACTUAL_KANJI_TO_SHOW)
+                      'actualKanji': utils.getActualKanjiList(userSet)
                   })
 
 
 def kanjiWords(request, kanjiId, kanjiWordId=None):
     kanji = get_object_or_404(Kanji, pk=kanjiId)
-    kanjiWords = KanjiWord.objects.filter(relatedKanji=kanji)
+    kanjiWords = KanjiWord.objects.select_related('relatedKanji').filter(relatedKanji=kanji)
     context = {
         'kanji': kanji,
         'kanjiWords': kanjiWords,
@@ -96,11 +108,15 @@ def kanjiWords(request, kanjiId, kanjiWordId=None):
         else:
             form = KanjiWordsForm()
 
+    userSet = utils.getUserSettings(request.user)
+    if not userSet:
+        return goToSettings()
+
     return render(request, 'kanjiwords.html',
                   {
                       'content': context,
                       'form': form,
-                      'actualKanji': utils.getActualKanji(settings.ACTUAL_KANJI_TO_SHOW)
+                      'actualKanji': utils.getActualKanjiList(userSet)
                   })
 
 

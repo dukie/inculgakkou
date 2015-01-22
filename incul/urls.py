@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from django.conf.urls import patterns, include, url
-
+from django.conf.urls import patterns, url, include
 from django.contrib import admin
+from ajax_select import urls as ajax_select_urls
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
                        # Base
-                       url(r'^incul/bunpou/(?P<levelId>\d+)/$', 'note.views.lessons', name='lessons'),
+                       url(r'^incul/bunpou/$', 'note.views.lessons', name='lessons'),
                        url(r'^incul/bunpou/lesson/(?P<lessonId>\d+)/$', 'note.views.topics', name='topics'),
                        url(r'^incul/bunpou/topic/(?P<topicId>\d+)/$', 'note.views.examples', name='examples'),
                        url(r'^incul/kanji/kanjilist/(?P<lessonId>\d+)/$', 'note.kanjiviews.kanjiList',
@@ -15,10 +15,11 @@ urlpatterns = patterns('',
                        url(r'^incul/kanji/kanjiwords/(?P<kanjiId>\d+)/$', 'note.kanjiviews.kanjiWords',
                            name='kanjiWords'),
                        url(r'^incul/search/(?P<searchString>\w*)/$', 'note.views.search', name='search'),
-                       url(r'^incul/$', 'note.views.home'),
+                       url(r'^incul/$', 'note.views.lessons', name='home'),
 
                        #Add views
                        url(r'^incul/addLevel/$', 'note.views.addLevel', name='addLevel'),
+                       url(r'^incul/userSettings/$', 'note.views.userSettings', name='userSettings'),
                        url(r'^incul/sensei/(?P<senseiId>\w+){0,1}$', 'note.views.sensei', name='senseis'),
                        url(r'^incul/bunpou/(?P<levelId>\d+)/(?P<lessonId>\d+)/$', 'note.views.lessons',
                            name='lessonsEdit'),
@@ -44,8 +45,12 @@ urlpatterns = patterns('',
                        url(r'^incul/english/training/examples/$', 'note.trainingsViews.englishExamples',
                            name='englishExamplesTraining'),
                        #TrainingViews
-                       url(r'^incul/kanji/quizze/(?P<answer>\w*)[/]?$', 'note.trainingsViews.kanjiQuizze',
-                           name='kanjiQuizze'),
+                       #url(r'^incul/kanji/quizze/(?P<answer>\w*)[/]?$', 'note.trainingsViews.kanjiQuizze',
+                       #    name='kanjiQuizze'),
+                       url(r'^incul/kanji/quizze/testProcess/$', 'note.trainingsViews.testProcess',
+                           name='testProcess'),
+                       url(r'^incul/kanji/quizze/$', 'note.trainingsViews.trainingView',
+                           name='trainingView'),
                        url(r'^incul/bunpou/training/dictionary/$', 'note.trainingsViews.dictionary',
                            name='dictionaryTraining'),
                        url(r'^incul/bunpou/training/grammar/$', 'note.trainingsViews.grammar', name='grammarTraining'),
@@ -54,6 +59,11 @@ urlpatterns = patterns('',
                        #Post views
                        url(r'^incul/convert/$', 'note.views.convert', name='convert'),
 
-                       #Main
-                       url(r'^incul/admin/', include(admin.site.urls)),
+                       #Admin
+                       url('^incul/aadmin/lookups/', include(ajax_select_urls)),
+                       url('^incul/aadmin/', include(admin.site.urls)),
+
+                       #Auth urls
+                       url(r'^incul/login/$', 'django.contrib.auth.views.login', name='login'),
+                       url(r'^incul/logout/$', 'django.contrib.auth.views.logout', name='logout'),
 )
